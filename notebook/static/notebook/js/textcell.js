@@ -86,16 +86,47 @@ define([
         Cell.prototype.create_element.apply(this, arguments);
         var that = this;
 
+        // Main cell container
         var cell = $("<div>").addClass('cell text_cell');
         cell.attr('tabindex','2');
-
-        var prompt = $('<div/>').addClass('prompt input_prompt');
-        cell.append(prompt);
-        var inner_cell = $('<div/>').addClass('inner_cell');
+        
+        
+        
+        // Toolbar row
+        var toolbarRow = $('<div/>').addClass('toolbar_row');
+        // var toolbarPrompt = $('<div/>').addClass('prompt toolbar_prompt');
         this.celltoolbar = new celltoolbar.CellToolbar({
             cell: this, 
-            notebook: this.notebook});
-        inner_cell.append(this.celltoolbar.element);
+            notebook: this.notebook
+        });
+        toolbarRow
+            // .append(toolbarPrompt)
+            .append(this.celltoolbar.element);
+        
+        // Try this -- wrap the entire cell content area
+        
+        var cellContent = $('<div/>').addClass('cell_content');
+
+
+        // PROMPT
+        var textRow = $('<div/>').addClass('cell_row');
+        var prompt = $('<div/>').addClass('prompt input_prompt');
+        
+        // This row contains the prompt and text subarea.
+        // This is the only row of the text cell.
+        textRow
+            .append(prompt)
+            .append(inner_cell);
+        
+        // cell.append(prompt);
+        
+        
+        var inner_cell = $('<div/>').addClass('inner_cell');
+        //this.celltoolbar = new celltoolbar.CellToolbar({
+        //    cell: this, 
+        //    notebook: this.notebook});
+        //inner_cell.append(this.celltoolbar.element);
+        
         var input_area = $('<div/>').addClass('input_area');
         this.code_mirror = new CodeMirror(input_area.get(0), this._options.cm_config);
         // In case of bugs that put the keyboard manager into an inconsistent state,
@@ -110,7 +141,18 @@ define([
         var render_area = $('<div/>').addClass('text_cell_render rendered_html')
             .attr('tabindex','-1');
         inner_cell.append(input_area).append(render_area);
-        cell.append(inner_cell);
+
+        // Build the cell
+        cell
+            .append(toolbarRow)
+            .append(cellContent
+                .append(textRow
+                    .append(prompt)
+                    .append(inner_cell)
+                )
+            );
+        
+        // cell.append(inner_cell);
         this.element = cell;
     };
 

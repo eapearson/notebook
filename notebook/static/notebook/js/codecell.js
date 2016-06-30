@@ -158,18 +158,32 @@ define([
         Cell.prototype.create_element.apply(this, arguments);
         var that = this;
 
+        // Code cell container
         var cell =  $('<div></div>').addClass('cell code_cell');
         cell.attr('tabindex','2');
-
-        var input = $('<div></div>').addClass('input');
+        
+        // Toolbar row
+        var toolbarRow = $('<div/>').addClass('toolbar_row');
+        // var toolbarPrompt = $('<div/>').addClass('prompt toolbar_prompt');
+        this.celltoolbar = new celltoolbar.CellToolbar({
+            cell: this, 
+            notebook: this.notebook
+        });
+        toolbarRow
+            // .append(toolbarPrompt)
+            .append(this.celltoolbar.element);
+        
+        // Try this -- wrap the entire cell content area
+        
+        var cellContent = $('<div/>').addClass('cell_content');
+        
+        // Input row
+        var input = $('<div></div>').addClass('input cell_row');
         this.input = input;
         var prompt = $('<div/>').addClass('prompt input_prompt');
         var inner_cell = $('<div/>').addClass('inner_cell');
-        this.celltoolbar = new celltoolbar.CellToolbar({
-            cell: this, 
-            notebook: this.notebook});
-        inner_cell.append(this.celltoolbar.element);
         var input_area = $('<div/>').addClass('input_area');
+
         this.code_mirror = new CodeMirror(input_area.get(0), this._options.cm_config);
         // In case of bugs that put the keyboard manager into an inconsistent state,
         // ensure KM is enabled when CodeMirror is focused:
@@ -183,14 +197,26 @@ define([
         inner_cell.append(input_area);
         input.append(prompt).append(inner_cell);
 
-        var output = $('<div></div>');
-        cell.append(input).append(output);
+        // Output row
+        var output = $('<div></div>').addClass('cell_row');
+        
+        // Assemble the cell
+        cell
+            .append(toolbarRow)
+            .append(cellContent
+                    .append(input)
+                    .append(output));
+        
+        // This is an important part of the API -- the cell jQuery element is
+        // available as "element".
         this.element = cell;
+        
         this.output_area = new outputarea.OutputArea({
             selector: output, 
             prompt_area: true, 
             events: this.events, 
-            keyboard_manager: this.keyboard_manager});
+            keyboard_manager: this.keyboard_manager
+        });
         this.completer = new completer.Completer(this, this.events);
     };
 

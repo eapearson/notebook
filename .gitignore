@@ -29,3 +29,7 @@ src
 Read the Docs
 config.rst
 
+/nbproject/private/
+/setupbase$py.class
+/nbproject/project.properties
+/nbproject/project.xml

@@ -33,7 +33,7 @@ define([
 
     CellToolbar.prototype.create_element = function () {
         this.inner_element = $('<div/>').addClass('celltoolbar');
-        this.element = $('<div/>').addClass('ctb_hideshow')
+        this.element = $('<div/>').addClass('celltoolbar_container ctb_hideshow')
             .append(this.inner_element);
     };
 
